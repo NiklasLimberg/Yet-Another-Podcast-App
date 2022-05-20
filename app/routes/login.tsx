@@ -1,6 +1,8 @@
-import  { Form, useLoaderData, json, } from 'remix';
-import type {  ActionFunction,  LoaderFunction } from 'remix'
+import type {  ActionFunction,  LoaderFunction } from '@remix-run/node'
+
+import  { Form, useLoaderData} from '@remix-run/react';
 import authenticator from '~/services/auth.server';
+import {json } from '@remix-run/node';
 
 import { sessionStorage } from '~/services/session.server';
 
