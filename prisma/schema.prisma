@@ -50,18 +50,17 @@ model ProgressOnPlayback {
 model Series {
   id            String                 @id @default(uuid())
   title         String
-  subTitle      String
   description   String
   language      String
   image         String
-  link          String
+  link          String                 @unique
   explicit      Boolean
   pubDate       DateTime
   lastBuildDate DateTime
   ttl           Int                    @default(5)
-  lastScraped   DateTime
   created       DateTime               @default(now())
   updated       DateTime               @updatedAt
+  episodes      Episode[]
   categories    Category[]
   subscriptions SubscriptionToSeries[]
   scrapedBy     Scrape[]
@@ -69,8 +68,9 @@ model Series {
 
 model Episode {
   id              String               @id @default(uuid())
-  guid            String
+  guid            String               @unique
   title           String
+  seriesId        String
   description     String
   descriptionHTML String
   pubDate         DateTime
@@ -80,6 +80,7 @@ model Episode {
   duration        Int
   created         DateTime             @default(now())
   updated         DateTime             @updatedAt
+  series          Series               @relation(fields: [seriesId], references: [id])
   updatedIn       Scrape[]
   categories      Category[]
   playbacks       ProgressOnPlayback[]
