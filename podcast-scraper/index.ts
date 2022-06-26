@@ -14,7 +14,7 @@ export default async function scrapeByURL(podcastURL: string) {
         lastBuildDate: string;
         image: { url: string };
         language: string;
-        itunes: { 
+        itunes: {
             'new-feed-ur': string,
             keywords: string[]
         }
@@ -34,7 +34,6 @@ export default async function scrapeByURL(podcastURL: string) {
 
     const series = await parser.parseURL(podcastURL);
 
-  
     const transformedSeries = {
         title: series.title,
         description: series.description,
@@ -45,23 +44,26 @@ export default async function scrapeByURL(podcastURL: string) {
         pubDate: new Date(series.pubDate),
         lastBuildDate: new Date(series.lastBuildDate),
         ttl: parseInt(series.ttl, 10),
-        categories: { 
+        categories: {
             connectOrCreate: series.itunes.keywords.map((keyword) => {
-                keyword = keyword.replace('WDR 5', 'WDR5').trim()
+                const normalizedKeyword = keyword.replace('WDR 5', 'WDR5').trim();
                 return {
-                    where: { name: keyword },
-                    create: { name: keyword },
+                    where: { name: normalizedKeyword },
+                    create: { name: normalizedKeyword },
                 };
             }),
-        }
+        },
     };
 
-    const insertedSeries = await db.series.upsert({ create: transformedSeries, update: transformedSeries, where: { link: transformedSeries.link } });
-
+    const insertedSeries = await db.series.upsert({
+        create: transformedSeries,
+        update: transformedSeries,
+        where: { link: transformedSeries.link },
+    });
 
     const seriesID = insertedSeries.id;
 
-    await Promise.allSettled(series.items.map(episode => {
+    await Promise.allSettled(series.items.map((episode) => {
         const transformedEpisode = {
             guid: episode.guid,
             title: episode.title,
@@ -72,15 +74,17 @@ export default async function scrapeByURL(podcastURL: string) {
             image: episode['itunes:image'],
             link: episode.link,
             duration: parseInt(episode['itunes:duration'], 10),
-            seriesId: seriesID
-        }
+            seriesId: seriesID,
+        };
 
-        console.log(transformedEpisode)
+        console.log(transformedEpisode);
 
-        return db.episode.upsert({create: transformedEpisode, update: transformedEpisode, where: {guid: episode.guid}})
-    }))
-
-    
+        return db.episode.upsert({
+            create: transformedEpisode,
+            update: transformedEpisode,
+            where: { guid: episode.guid },
+        });
+    }));
 }
 
- scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-politikum/politikum116.podcast').then(() => scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-dok5-das-feature/dokfuenf140.podcast'))
+scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-politikum/politikum116.podcast').then(() => scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-dok5-das-feature/dokfuenf140.podcast'));
