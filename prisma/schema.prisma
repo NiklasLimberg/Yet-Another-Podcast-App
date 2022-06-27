@@ -61,7 +61,7 @@ model Series {
   created       DateTime               @default(now())
   updated       DateTime               @updatedAt
   episodes      Episode[]
-  categories    Category[]
+  keywords      Keyword[]
   subscriptions SubscriptionToSeries[]
   scrapedBy     Scrape[]
 }
@@ -82,11 +82,11 @@ model Episode {
   updated         DateTime             @updatedAt
   series          Series               @relation(fields: [seriesId], references: [id])
   updatedIn       Scrape[]
-  categories      Category[]
+  keywords        Keyword[]
   playbacks       ProgressOnPlayback[]
 }
 
-model Category {
+model Keyword {
   id       String    @id @default(uuid())
   name     String    @unique
   created  DateTime  @default(now())
