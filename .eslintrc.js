@@ -1,35 +1,27 @@
 module.exports = {
-    plugins: [
-        'react',
-    ],
+    env: {
+        browser: true,
+        es2021: true,
+        node: true
+    },
     extends: [
-        'eslint:all',
-        '@remix-run/eslint-config',
-        'airbnb/base',
+        'eslint:recommended',
+        'plugin:vue/vue3-recommended',
+        'plugin:@typescript-eslint/recommended',
     ],
-    rules: {
-        indent: ['error', 4],
-        'react/jsx-indent': ['error', 4],
-        'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
-        'import/extensions': ['error', 'ignorePackages', { ts: 'never' }],
-    },
+    parser: "vue-eslint-parser",
     parserOptions: {
-        ecmaVersion: 2022,
-        ecmaFeatures: {
-            jsx: true,
-        },
+        parser: "@typescript-eslint/parser",
+        sourceType: "module"
     },
-    overrides: [
-        {
-            files: ['*.ts', '*.tsx'],
-            rules: {
-                'no-undef': 'off',
-            },
-        },
-    ],
     settings: {
-        react: {
-            version: 'detect',
-        },
+        'import/resolver': {
+            typescript: {}
+        }
     },
-};
+    rules: { 
+        indent: ['error', 4],
+        'vue/multi-word-component-names': 0,
+        'no-undef': 0
+    },
+}

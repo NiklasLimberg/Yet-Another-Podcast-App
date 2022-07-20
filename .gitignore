@@ -1,7 +1,4 @@
 node_modules
+.nuxt
 
-/test
-/.cache
-/build
-/public/build
 .env
