@@ -1,4 +1,4 @@
-export function castToNumber(value: string | string[] | undefined, defaultValue: number): number {
+export function castToNumber<T>(value: string | string[] | undefined, defaultValue: T): number | T {
     if(value === undefined) {
         return defaultValue;
     }
@@ -14,7 +14,7 @@ export function castToNumber(value: string | string[] | undefined, defaultValue:
     }
 }
 
-export function castToString(value: string | string[] | undefined, defaultValue?: string): string | undefined {
+export function castToString<T>(value: string | string[] | undefined, defaultValue: T): string | T {
     if(Array.isArray(value)) {
         return value[0]
     }

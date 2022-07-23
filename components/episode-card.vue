@@ -1,36 +1,31 @@
 <template>
-  <div class="container">
-    <div>{{ props.episode.title }}</div>
-    <div v-html="props.episode.descriptionHTML" />
+  <div>
+    <div class="title-container">
+      <img :src="episode.image">
+      <span>{{ episode.seriesTitle }}</span>
+    </div>
+    <h3>{{ episode.title }}</h3>
+    <span v-html="episode.descriptionHTML" />
   </div>
 </template>
 
 <script setup lang="ts">
-interface Episode {
-  id: string
-  guid: string
-  title: string
-  seriesId: string
-  description: string
-  descriptionHTML: string
-  pubDate: Date
-  enclosure: string
-  image: string
-  link: string
-  duration: number
-  created: Date
-  updated: Date
-}
+import type { Episode } from '~types/Episode';
 
-
-const props = defineProps<{
+defineProps<{
   episode: Episode
-
 }>()
 </script>
 
 <style scoped>
-.container {
-  margin-bottom: 2rem;
+.title-container {
+  display: flex;
+  gap: 16px;
 }
+
+img {
+  height: 44px;
+  width: 44px;
+}
+
 </style>

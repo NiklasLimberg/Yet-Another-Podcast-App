@@ -6,4 +6,15 @@ export default defineNuxtConfig({
         strict: true,
         shim: false,
     },
+    buildModules: [
+        '@nuxtjs/google-fonts'
+    ],
+    css: [
+        '@/assets/css/global.css'
+    ],
+    googleFonts: {
+        families: {
+            Inter: true,
+        }
+    }
 })

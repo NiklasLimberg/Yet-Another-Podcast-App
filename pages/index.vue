@@ -26,8 +26,6 @@ async function fetchEpisodes(cursor?: string) {
 } 
 
 async function onLoadMore() {
-    console.log('fetch more')
-
     if(fetchPending) {
         return
     }
@@ -41,5 +39,8 @@ async function onLoadMore() {
 .infinite-container {
   height: 100vh;
   overflow-y: scroll;
+
+  display: grid;
+  gap: 16px;
 }
 </style>
