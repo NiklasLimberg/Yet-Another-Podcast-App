@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,6 @@ model User {
   passwordHash  String
   subscriptions SubscriptionToSeries[]
   playBacks     ProgressOnPlayback[]
-  manualScrapes Scrape[]
 }
 
 model Creator {
@@ -41,7 +40,7 @@ model ProgressOnPlayback {
   episodeId String
   created   DateTime @default(now())
   updated   DateTime @updatedAt
-  users     User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   episodes  Episode  @relation(fields: [episodeId], references: [id])
 
   @@id([userId, episodeId])
@@ -50,7 +49,7 @@ model ProgressOnPlayback {
 model Series {
   id            String                 @id @default(uuid())
   title         String
-  description   String
+  description   String                 @db.VarChar(512)
   language      String
   image         String
   link          String                 @unique
@@ -63,7 +62,6 @@ model Series {
   episodes      Episode[]
   keywords      Keyword[]
   subscriptions SubscriptionToSeries[]
-  scrapedBy     Scrape[]
 }
 
 model Episode {
@@ -71,8 +69,8 @@ model Episode {
   guid            String               @unique
   title           String
   seriesId        String
-  description     String
-  descriptionHTML String
+  description     String               @db.VarChar(512)
+  descriptionHTML String               @db.VarChar(512)
   pubDate         DateTime
   enclosure       String
   image           String
@@ -81,7 +79,6 @@ model Episode {
   created         DateTime             @default(now())
   updated         DateTime             @updatedAt
   series          Series               @relation(fields: [seriesId], references: [id])
-  updatedIn       Scrape[]
   keywords        Keyword[]
   playbacks       ProgressOnPlayback[]
 }
@@ -92,17 +89,4 @@ model Keyword {
   created  DateTime  @default(now())
   series   Series[]
   episodes Episode[]
-}
-
-model Scrape {
-  id              String    @id @default(uuid())
-  seriesId        String
-  created         DateTime  @default(now())
-  completed       DateTime?
-  userId          String?
-  manual          Boolean   @default(false)
-  updatedSeries   Boolean   @default(false)
-  updatedEpisodes Episode[]
-  initiator       User?     @relation(fields: [userId], references: [id])
-  series          Series    @relation(fields: [seriesId], references: [id])
 }
