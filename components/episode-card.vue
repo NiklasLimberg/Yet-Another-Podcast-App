@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div
+    class="card"
+    @click="setPlaying"
+  >
     <div class="title-container">
       <img :src="episode.image">
       <span>{{ episode.seriesTitle }}</span>
@@ -12,9 +15,15 @@
 <script setup lang="ts">
 import type { Episode } from '~types/Episode';
 
-defineProps<{
+const playingEpisode = usePlayingEpisode();
+
+const props = defineProps<{
   episode: Episode
 }>()
+
+function setPlaying() {
+    playingEpisode.value = props.episode;
+}
 </script>
 
 <style scoped>

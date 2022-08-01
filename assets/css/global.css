@@ -37,13 +37,13 @@
     --status-emerald-500: #37D046;
 
     /* text styles */
-    --headline-small: normal 700 18px/22px;
-    --text-large: normal 700 32px/24px;
-    --text-bold: normal 700 16px/19px;
-    --text-semibold: normal 600 12px/15px;
-    --text-normal:  normal 400 14px/24px;
-    --text-secondary: normal 400 14px/18px;
-    --text-small: normal 400 12px/15px;
+    --headline-small: 700 18px  "Inter";
+    --text-large: 700 32px "Inter";
+    --text-bold:  700 16px "Inter";
+    --text-semibold: 600 12px "Inter";
+    --text-normal:  400 14px "Inter";
+    --text-secondary: 400 14px "Inter";
+    --text-small:  400 12px "Inter";
 
     /* units */
     --border-width: 1px;
@@ -74,7 +74,7 @@ h1 {
 
 h3 {
     font: var(--headline-small);
-    margin: 16px 0 0 0;
+    margin: 16px 0;
 }
 
 ul {
@@ -114,6 +114,11 @@ button {
     font: var(--text-bold);
     border-radius: 6px;
     padding: 8px 20px;
+}
+
+.card {
+    padding: 16px;
+    background-color: var(--neutrals-dark-gray-800);
 }
 
 * {
