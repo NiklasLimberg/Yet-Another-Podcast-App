@@ -21,7 +21,6 @@ import { vInfiniteScroll } from '@vueuse/components'
 
 const { data: episodes } = await useFetch('/api/feed');
 
-
 let fetchPending = false;
 async function fetchEpisodes(cursor?: string) {
     fetchPending = true;

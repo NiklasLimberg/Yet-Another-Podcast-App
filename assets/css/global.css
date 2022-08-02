@@ -132,3 +132,8 @@ body {
     margin: 48px 250px;
     background-color: var(--background-page-color);
 }
+
+
+progress {
+    width: 100%;
+}
