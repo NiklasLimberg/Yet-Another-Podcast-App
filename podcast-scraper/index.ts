@@ -85,4 +85,5 @@ export default async function scrapeByURL(podcastURL: string) {
     await Promise.allSettled(episodePromises);
 }
 
-scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-politikum/politikum116.podcast').then(() => scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-dok5-das-feature/dokfuenf140.podcast'));
+scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-politikum/politikum116.podcast')
+    .then(() => scrapeByURL('https://www1.wdr.de/mediathek/audio/wdr5/wdr5-dok5-das-feature/dokfuenf140.podcast'));

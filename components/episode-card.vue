@@ -1,15 +1,15 @@
 <template>
-  <div
-    class="card"
-    @click="setPlaying"
-  >
-    <div class="title-container">
-      <img :src="episode.image">
-      <span>{{ episode.seriesTitle }}</span>
+    <div
+        class="card"
+        @click="setPlaying"
+    >
+        <div class="title-container">
+            <img :src="episode.image">
+            <span>{{ episode.seriesTitle }}</span>
+        </div>
+        <h3>{{ episode.title }}</h3>
+        <span v-html="episode.descriptionHTML" />
     </div>
-    <h3>{{ episode.title }}</h3>
-    <span v-html="episode.descriptionHTML" />
-  </div>
 </template>
 
 <script setup lang="ts">

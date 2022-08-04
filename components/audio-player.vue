@@ -1,26 +1,35 @@
 <template>
-  <div class="container">
-    <p>Fixed at the bottom!</p>
-    <progress
-      :max="episode.duration"
-      :value="progress"
-    />
-    <audio
-      ref="audioElement"
-      @timeupdate="onTimeUpDate"
-    />
-    <div>
-      <button @click="pausePlay">
-        {{ isPaused ? 'Play!!!' : 'Pause!!!' }}
-      </button>
-      <button @click="skip(30)">
-        Forward!!!
-      </button>
-      <button @click="skip(-30)">
-        Backward!!!
-      </button>
+    <div class="container">
+        <p>Fixed at the bottom!</p>
+        <progress
+            :max="episode.duration"
+            :value="progress"
+        />
+        <audio
+            ref="audioElement"
+            @timeupdate="onTimeUpDate"
+        />
+        <div>
+            <button
+                type="button"
+                @click="pausePlay"
+            >
+                {{ isPaused ? 'Play!!!' : 'Pause!!!' }}
+            </button>
+            <button
+                type="button"
+                @click="skip(30)"
+            >
+                Forward!!!
+            </button>
+            <button
+                type="button"
+                @click="skip(-30)"
+            >
+                Backward!!!
+            </button>
+        </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts" setup>
@@ -87,10 +96,6 @@ function skip(seconds: number) {
     if(!audioElement.value) {
         return
     }
-
-    const nextCurrentTime = audioElement.value.currentTime + seconds;
-    audioElement.value.currentTime = nextCurrentTime;
-    progress.value = nextCurrentTime;
 }
 </script>
 

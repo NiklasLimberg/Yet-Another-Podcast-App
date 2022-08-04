@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <slot />
-    <audio-player
-      v-if="playingEpisode"
-      :episode="playingEpisode"
-    />
-  </div>
+    <div>
+        <slot />
+        <audio-player
+            v-if="playingEpisode"
+            :episode="playingEpisode"
+        />
+    </div>
 </template>
 
 

@@ -10,8 +10,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "scrape": "node  --require esbuild-register ./podcast-scraper/index.ts",
-    "lint": "eslint --ignore-path .gitignore --ext=.ts,.tsx .",
-    "lint-fix": "eslint --fix --ignore-path .gitignore  . "
+    "lint": "eslint --ignore-path .gitignore --ext=.ts,.vue .",
+    "lint-fix": "eslint --ignore-path .gitignore --ext=.ts,.vue --fix  . "
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"

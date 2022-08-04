@@ -2,5 +2,7 @@
     "cSpell.words": [
         "prisma",
         "upsert"
-    ]
+    ],
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
 }

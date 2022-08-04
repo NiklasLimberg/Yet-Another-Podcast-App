@@ -1,19 +1,19 @@
 <template>
-  <div>
-    <NuxtLink :to="{path: 'test'}">
-      LINK!
-    </NuxtLink>
-    <div
-      v-infinite-scroll="onLoadMore"
-      class="infinite-container"
-    >
-      <EpisodeCard 
-        v-for="episode of episodes"
-        :key="episode.id"
-        :episode="episode"
-      />
+    <div>
+        <NuxtLink :to="{path: 'test'}">
+            LINK!
+        </NuxtLink>
+        <div
+            v-infinite-scroll="onLoadMore"
+            class="infinite-container"
+        >
+            <EpisodeCard 
+                v-for="episode in episodes"
+                :key="episode.id"
+                :episode="episode"
+            />
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
