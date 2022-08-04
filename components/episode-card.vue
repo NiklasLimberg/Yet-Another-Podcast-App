@@ -15,15 +15,14 @@
 <script setup lang="ts">
 import type { Episode } from '~types/Episode';
 
-const playingEpisode = usePlayingEpisode();
+const audioPlayer = audioSession();
 
 const props = defineProps<{
   episode: Episode
 }>()
 
 function setPlaying() {
-    console.log('Set Playing')
-    playingEpisode.value = props.episode;
+    audioPlayer.setMedia(props.episode, { autoPlay: true });
 }
 </script>
 
