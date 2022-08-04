@@ -10,7 +10,7 @@ export interface Episode {
     link: string
     duration: number
     lastPlayed?: Date
-    progress?: number
+    progress: number
     created: Date
     updated: Date
   }

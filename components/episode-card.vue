@@ -22,6 +22,7 @@ const props = defineProps<{
 }>()
 
 function setPlaying() {
+    console.log('Set Playing')
     playingEpisode.value = props.episode;
 }
 </script>

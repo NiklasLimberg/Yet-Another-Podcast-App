@@ -59,9 +59,9 @@ export default defineEventHandler(async (event): Promise<Episode[]> => {
             link: episode.link,
             duration: episode.duration,
             lastPlayed: undefined,
-            progress: undefined,
+            progress: 120,
             created: episode.created,
-            updated: episode.updated
+            updated: episode.updated,
         }
     })
 }) 
