@@ -84,6 +84,7 @@ ul {
 }
 
 input {
+    width: 100%;
     padding: 11px;
     border: var(--default-border);
     background-color: var(--background-color);
@@ -131,9 +132,4 @@ button {
 body {
     margin: 48px 250px;
     background-color: var(--background-page-color);
-}
-
-
-progress {
-    width: 100%;
 }

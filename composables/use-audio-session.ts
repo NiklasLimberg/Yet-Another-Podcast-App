@@ -8,6 +8,7 @@ function setMedia(episode: Episode, { autoPlay }: { autoPlay: boolean } = { auto
     audioElement.src = episode.enclosure;
     audioElement.load();
 
+    audioElement.currentTime = episode.progress;
     playingMedia.value = episode;
 
     if(autoPlay) {
@@ -33,29 +34,31 @@ function skip(seconds: number) {
     audioElement.currentTime += seconds;
 }
 
-/**
-* Indicator for the ui
-*
-* @remarks
-* Use in conjunction with isBuffering to get the playback state
-*/
 const isPaused = ref(true);
-watch(isPaused, (shouldPause) => {
-    if(shouldPause) {
-        audioElement.pause()
-    } else {
-        audioElement.play()
-    }
-})
+audioElement.onplay = () => isPaused.value = false;
+audioElement.onpause = () => isPaused.value = true;
+
+function pause() {
+    console.log('pause')
+    audioElement.pause()
+}
+
+function play() {
+    console.log('play')
+    audioElement.play()
+}
+
 
 export default function () {
     return {
         playingMedia: readonly(playingMedia),
         isBuffering: readonly(isBuffering),
         progress: readonly(progress),
+        isPaused: readonly(isPaused),
         setMedia,
         skipTo,
         skip,
-        isPaused,
+        pause,
+        play,
     }
 }

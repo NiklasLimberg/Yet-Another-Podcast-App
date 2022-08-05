@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import type { Episode } from '~types/Episode';
 
-const audioPlayer = audioSession();
+const audioPlayer = useAudioSession();
 
 const props = defineProps<{
   episode: Episode

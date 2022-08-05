@@ -16,5 +16,6 @@ export default defineNuxtConfig({
         families: {
             Inter: true,
         }
-    }
+    },
+    ssr: false
 })

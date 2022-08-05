@@ -1,30 +1,47 @@
 <template>
-    <div class="container">
-        <p>Fixed at the bottom!</p>
-        <progress
-            :max="episode.duration"
-            :value="progress"
-        />
-        <audio
-            ref="audioElement"
-            @timeupdate="onTimeUpDate"
-        />
+    <div
+        v-if="audioSession.playingMedia.value"
+        class="container"
+    >
+        <div class="flex">
+            <h3>
+                {{ audioSession.playingMedia.value.title }}
+            </h3>
+            <p class="series-title">
+                {{ audioSession.playingMedia.value.seriesTitle }}
+            </p>
+        </div>
+        <input
+            type="range"
+            :max="audioSession.playingMedia.value.duration"
+            :value="audioSession.progress.value"
+            min="0"
+            @change="setProgress"
+        >
         <div>
             <button
+                v-if="audioSession.isPaused.value"
                 type="button"
-                @click="pausePlay"
+                @click="audioSession.play()"
             >
-                {{ isPaused ? 'Play!!!' : 'Pause!!!' }}
+                Play!!!
+            </button>
+            <button
+                v-else
+                type="button"
+                @click="audioSession.pause()"
+            >
+                Pause!!!
             </button>
             <button
                 type="button"
-                @click="skip(30)"
+                @click="audioSession.skip(30)"
             >
                 Forward!!!
             </button>
             <button
                 type="button"
-                @click="skip(-30)"
+                @click="audioSession.skip(-30)"
             >
                 Backward!!!
             </button>
@@ -33,70 +50,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { Episode } from '~types/Episode';
+const audioSession = useAudioSession()
 
-const props = defineProps<{
-  episode: Episode
-}>()
-
-const audioElement = ref<HTMLAudioElement>()
-
-const isPaused = ref(false);
-const progress = ref(props.episode.progress);
-
-
-onMounted(() => {
-    if(!audioElement.value) {
-        return; 
-    }
-
-    audioElement.value.src = props.episode.enclosure;
-    audioElement.value.currentTime = props.episode.progress;
-    audioElement.value.play()
-})
-
-watch(props.episode, () => {
-    if(!audioElement.value) {
-        return; 
-    }
-    
-    audioElement.value.src = props.episode.enclosure;
-    audioElement.value.currentTime = props.episode.progress;
-
-    audioElement.value.load()
-    audioElement.value.play()
-})
-
-function pausePlay() {
-    if(!audioElement.value) {
-        return
-    }
-
-    const paused = audioElement.value.paused
-    
-    if(paused) {
-        audioElement.value.play()
-    } else {
-        audioElement.value.pause()
-    }
-
-    console.log(audioElement.value.paused)
-
-    isPaused.value = audioElement.value.paused;
+function setProgress(ev: Event) {
+    audioSession.skipTo((ev.target as HTMLInputElement).valueAsNumber);
 }
 
-function onTimeUpDate() {
-    if(!audioElement.value) {
-        return
-    }
-    progress.value = Math.round(audioElement.value.currentTime)
-}
-
-function skip(seconds: number) {
-    if(!audioElement.value) {
-        return
-    }
-}
 </script>
 
 <style scoped>
@@ -105,6 +64,32 @@ function skip(seconds: number) {
     width: 100vw;
     bottom: 0;
     left: 0;
+    
+    background-color: var(--neutrals-dark-gray-800);
     padding: 16px;
+    z-index: 1;
+}
+
+h3 {
+    margin: 0;
+}
+
+
+
+@media (min-width: 1024px) {
+    .flex {
+        display: flex;
+        align-items: baseline;
+    }
+    .series-title::before {
+        margin: 0px 8px;
+        content: '-';
+    }
+}
+
+@media (max-width: 1024px) {
+    .series-title {
+        margin-top: 16px;
+    }
 }
 </style>
