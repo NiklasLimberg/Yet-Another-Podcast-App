@@ -1,3 +1,5 @@
+@import url('./css-reset.css');
+
 :root {    
     /* dark-gray */
     --neutrals-gray-50: #F9FAFB;
@@ -93,28 +95,18 @@ input {
 }
 
 button {
-    width: fit-content;
-    height: fit-content;
-}
-
-.button-primary {
     display: inline;
     text-align: center;
-    border-color: var(--vivacious-600);
-    background-color: var(--vivacious-500);
-    font: var(--text-bold);
-    border-radius: 6px;
-    padding: 8px 20px;
+    background-color: transparent;
+    border-color: var(--text-color);
+    border-radius: 8px;
+    padding: 8px 16px;
 }
 
-.button-secondary {
-    display: inline;
-    text-align: center;
-    border-color: var(--neutrals-dark-gray-700);
-    background-color: var(--neutrals-dark-gray-400);
-    font: var(--text-bold);
-    border-radius: 6px;
-    padding: 8px 20px;
+
+button.transparent {
+    border: none;
+    padding: 0;
 }
 
 .card {

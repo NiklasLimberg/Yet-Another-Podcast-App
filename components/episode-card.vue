@@ -22,7 +22,7 @@ const props = defineProps<{
 }>()
 
 function setPlaying() {
-    audioPlayer.setMedia(props.episode, { autoPlay: true });
+    audioPlayer.setMedia(props.episode);
 }
 </script>
 

@@ -3,7 +3,7 @@
         v-if="audioSession.playingMedia.value"
         class="container"
     >
-        <div class="flex">
+        <div class="description-container">
             <h3>
                 {{ audioSession.playingMedia.value.title }}
             </h3>
@@ -18,13 +18,14 @@
             min="0"
             @change="setProgress"
         >
-        <div>
+        <div class="flex">
             <button
                 v-if="audioSession.isPaused.value"
                 type="button"
+                class="transparent"
                 @click="audioSession.play()"
             >
-                Play!!!
+                <icon-play />
             </button>
             <button
                 v-else
@@ -74,13 +75,16 @@ h3 {
     margin: 0;
 }
 
-
+.flex {
+    display: flex;
+}
 
 @media (min-width: 1024px) {
-    .flex {
+    .description-container {
         display: flex;
         align-items: baseline;
     }
+ 
     .series-title::before {
         margin: 0px 8px;
         content: '-';
