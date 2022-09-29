@@ -4,12 +4,12 @@ export interface Episode {
     seriesId: string
     seriesTitle: string
     descriptionHTML: string
-    pubDate: Date
+    pubDate: string
     enclosure: string
     image: string
     link: string
     duration: number
-    lastPlayed?: Date
+    lastPlayed?: string
     progress: number
     created: Date
     updated: Date

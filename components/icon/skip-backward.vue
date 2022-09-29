@@ -10,8 +10,14 @@
         stroke-linecap="round"
         stroke-linejoin="round"
     >
-        <polygon points="20,20 75,50 20,80" />
-    </svg>
+        <polyline
+            fill="none"
+            points="90,10 50,50 90,90 "
+        />
+        <polyline
+            fill="none"
+            points="60,10 20,50 60,90 "
+        /></svg>
 </template>
 
 <script setup lang="ts">
@@ -25,3 +31,4 @@ withDefaults(defineProps<{
     strokeColor: '#F9FAFB',
 })
 </script>
+

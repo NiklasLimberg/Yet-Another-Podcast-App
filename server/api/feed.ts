@@ -53,7 +53,7 @@ export default defineEventHandler(async (event): Promise<Episode[]> => {
             seriesId: episode.series.id,
             seriesTitle: episode.series.title,
             descriptionHTML: episode.descriptionHTML,
-            pubDate: episode.pubDate,
+            pubDate: episode.pubDate.toISOString(),
             enclosure: episode.enclosure,
             image: episode.image,
             link: episode.link,

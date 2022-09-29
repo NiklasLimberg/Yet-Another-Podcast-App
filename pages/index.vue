@@ -1,18 +1,13 @@
 <template>
-    <div>
-        <NuxtLink :to="{path: 'test'}">
-            LINK!
-        </NuxtLink>
-        <div
-            v-infinite-scroll="onLoadMore"
-            class="infinite-container"
-        >
-            <EpisodeCard 
-                v-for="episode in episodes"
-                :key="episode.id"
-                :episode="episode"
-            />
-        </div>
+    <div
+        v-infinite-scroll="onLoadMore"
+        class="infinite-container"
+    >
+        <EpisodeCard 
+            v-for="episode in episodes"
+            :key="episode.id"
+            :episode="episode"
+        />
     </div>
 </template>
 
@@ -40,11 +35,19 @@ async function onLoadMore() {
 </script>
 
 <style scoped>
-.infinite-container {
-  height: 100vh;
-  overflow-y: scroll;
 
+@media (min-width: 1024px) {
+    .infinite-container {
+        width: 620px;
+        margin: 0 auto;
+    }
+}
+
+.infinite-container {
   display: grid;
   gap: 16px;
+
+  height: 100vh;
+  overflow-y: scroll;
 }
 </style>

@@ -10,7 +10,18 @@
         stroke-linecap="round"
         stroke-linejoin="round"
     >
-        <polygon points="20,20 75,50 20,80" />
+        <line
+            x1="35"
+            y1="30"
+            x2="35"
+            y2="70"
+        /> 
+        <line
+            x1="65"
+            y1="30"
+            x2="65"
+            y2="70"
+        />
     </svg>
 </template>
 

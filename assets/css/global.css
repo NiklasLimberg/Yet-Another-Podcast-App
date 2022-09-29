@@ -122,6 +122,5 @@ button.transparent {
 }
 
 body {
-    margin: 48px 250px;
     background-color: var(--background-page-color);
 }

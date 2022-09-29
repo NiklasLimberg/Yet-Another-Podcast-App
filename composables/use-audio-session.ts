@@ -1,15 +1,28 @@
 import { Episode } from '~types/Episode';
 
 const audioElement = new Audio();
+const mediaSession = navigator.mediaSession;
 
 const playingMedia = ref<Episode | undefined>()
 
-function setMedia(episode: Episode, { autoPlay }: { autoPlay: boolean } = { autoPlay: false }): void {
+
+function setMedia(episode: Episode, options: { autoPlay: boolean } = { autoPlay: false }): void {
+    const { autoPlay } = options;
+
     audioElement.src = episode.enclosure;
     audioElement.load();
 
     audioElement.currentTime = episode.progress;
     playingMedia.value = episode;
+
+    mediaSession.metadata = new MediaMetadata({
+        title: episode.title,
+        artist: episode.seriesTitle,
+        artwork: [
+            { src: episode.image }
+        ]
+    });
+    
 
     if(autoPlay) {
         audioElement.play()
@@ -39,14 +52,41 @@ audioElement.onplay = () => isPaused.value = false;
 audioElement.onpause = () => isPaused.value = true;
 
 function pause() {
-    console.log('pause')
     audioElement.pause()
 }
 
 function play() {
-    console.log('play')
     audioElement.play()
 }
+
+mediaSession.setActionHandler('play', ({action}) => { 
+    if(action === 'play') {
+        play();
+    }
+});
+
+
+mediaSession.setActionHandler('pause', ({action}) => { 
+    if(action === 'pause') {
+        pause();
+    }
+});
+
+mediaSession.setActionHandler('previoustrack', ({action}) => { 
+    if(action === 'previoustrack') {
+        skip(-30);
+    }
+});
+mediaSession.setActionHandler('nexttrack',({action}) => { 
+    if(action === 'nexttrack') {
+        skip(30);
+    }
+});
+mediaSession.setActionHandler('seekto', ({action, seekTime}) => { 
+    if(action === 'seekto' && seekTime) {
+        skipTo(seekTime);
+    }
+});
 
 
 export default function () {

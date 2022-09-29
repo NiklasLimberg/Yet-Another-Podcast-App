@@ -5,7 +5,10 @@
     >
         <div class="title-container">
             <img :src="episode.image">
-            <span>{{ episode.seriesTitle }}</span>
+            <div>
+                <div class="series-title">{{ episode.seriesTitle }}</div>
+                <div>{{ new Date(episode.pubDate).toLocaleString() }}</div>
+            </div>
         </div>
         <h3>{{ episode.title }}</h3>
         <span v-html="episode.descriptionHTML" />
@@ -31,10 +34,12 @@ function setPlaying() {
   display: flex;
   gap: 16px;
 }
+.series-title {
+    margin-bottom: 8px;
+}
 
 img {
   height: 44px;
   width: 44px;
 }
-
 </style>
