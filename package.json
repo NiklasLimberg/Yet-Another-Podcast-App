@@ -22,7 +22,9 @@
     "@vueuse/core": "^8.9.4",
     "esbuild": "^0.14.47",
     "esbuild-register": "^3.3.3",
-    "fast-xml-parser": "^4.0.8"
+    "fast-xml-parser": "^4.0.8",
+    "google-auth-library": "^8.5.2",
+    "nuxt-vue3-google-signin": "^0.0.5"
   },
   "devDependencies": {
     "@nuxtjs/google-fonts": "^3.0.0-0",

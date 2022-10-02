@@ -13,7 +13,6 @@ model User {
   updatedAt     DateTime               @updatedAt
   email         String                 @unique
   username      String                 @unique
-  passwordHash  String
   subscriptions SubscriptionToSeries[]
   playBacks     ProgressOnPlayback[]
 }

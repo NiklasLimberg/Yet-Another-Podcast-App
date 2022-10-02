@@ -63,7 +63,7 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 const audioSession = useAudioSession()
 
 function setProgress(ev: Event) {
