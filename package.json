@@ -17,17 +17,23 @@
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.1.1",
+    "@prisma/client": "^4.4.0",
     "@vueuse/components": "^8.9.4",
     "@vueuse/core": "^8.9.4",
+    "bcrypt": "^5.0.1",
+    "browser-detect": "^0.2.28",
     "esbuild": "^0.14.47",
     "esbuild-register": "^3.3.3",
     "fast-xml-parser": "^4.0.8",
-    "google-auth-library": "^8.5.2",
-    "nuxt-vue3-google-signin": "^0.0.5"
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^9.0.0",
+    "zod": "^3.19.1"
   },
   "devDependencies": {
     "@nuxtjs/google-fonts": "^3.0.0-0",
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/parser": "^5.25.0",
     "eslint": "^8.18.0",
     "eslint-config-airbnb": "^19.0.4",
