@@ -6,6 +6,6 @@ export interface AccessTokenContent extends JwtPayload {
 }
 
 export interface RefreshTokenContent extends JwtPayload {
-    jwtid: string;
+    jti: string;
     userId: string
 }

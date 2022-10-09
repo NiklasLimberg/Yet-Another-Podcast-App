@@ -49,18 +49,15 @@
 </template>
   
 <script lang="ts" setup>
+const client = useClient()
+
 const email = ref('')
 const password = ref('')
 
 async function login() {
-    const response = await useFetch('/api/auth/login', { 
-        body: {
-            email: email.value,
-            password: password.value
-        }
+    await client.mutation('user.login', { 
+        email: email.value,
+        password: password.value
     })
-    if (!response.error) {
-        navigateTo('/')
-    }
 }
 </script>

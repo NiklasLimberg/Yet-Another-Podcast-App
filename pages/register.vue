@@ -60,21 +60,17 @@
 </template>
   
 <script lang="ts" setup>
+const client = useClient()
+
 const username = ref('')
 const email = ref('')
 const password = ref('')
 
 async function register() {
-    console.log('registering')
-    const response = await useFetch('/api/auth/register', {
-        body: {
-            username: username.value,
-            email: email.value,
-            password: password.value
-        }
+    await client.mutation('user.register', { 
+        username: username.value,
+        email: email.value,
+        password: password.value
     })
-    if (!response.error) {
-        navigateTo('/')
-    }
 }
 </script>

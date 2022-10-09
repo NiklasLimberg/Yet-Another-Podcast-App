@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "prisma",
+        "trpc",
         "upsert"
     ],
     "editor.insertSpaces": true,
