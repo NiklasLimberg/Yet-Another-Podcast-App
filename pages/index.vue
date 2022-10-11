@@ -14,23 +14,28 @@
 <script setup lang="ts">
 import { vInfiniteScroll } from '@vueuse/components'
 
-const { data: episodes } = await useFetch('/api/feed');
+const client = useClient()
 
 let fetchPending = false;
-async function fetchEpisodes(cursor?: string) {
+let  nextCursor: string | null = null;
+async function fetchEpisodes() {
     fetchPending = true;
-    const data = $fetch('/api/feed', { params: { cursor }})
+    const response = await client.query('episode.feed', { cursor: nextCursor }, { context: {}});
+
+    nextCursor = response.nextCursor;
+
     fetchPending = false;
-    return data;
-} 
+    return response.items;
+}
+
+const episodes = ref(await fetchEpisodes());
 
 async function onLoadMore() {
     if(fetchPending) {
         return
     }
 
-    const cursor = episodes.value.at(-1)?.id
-    episodes.value = episodes.value.concat(await fetchEpisodes(cursor))
+    episodes.value = episodes.value.concat(await fetchEpisodes())
 }
 </script>
 

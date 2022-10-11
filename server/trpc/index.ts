@@ -13,7 +13,7 @@ import {
 import { castToString } from '../validators';
 
 import { userRouter } from './user';
-
+import { episodeRouter } from './episodes';
 
 // Optional
 // https://trpc.io/docs/context
@@ -59,3 +59,4 @@ export const createContext = async (event: CompatibilityEvent) => {
 
 export const router = trpc.router<inferAsyncReturnType<typeof createContext>>()
     .merge('user.', userRouter)
+    .merge('episode.', episodeRouter)
