@@ -5,7 +5,6 @@ export default defineNuxtConfig({
     runtimeConfig: {
         domain: '',
     },
-    modules: ['trpc-nuxt'],
     typescript: {
         strict: true,
         shim: false,

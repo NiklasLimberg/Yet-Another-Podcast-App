@@ -14,13 +14,13 @@
 <script setup lang="ts">
 import { vInfiniteScroll } from '@vueuse/components'
 
-const client = useClient()
+const client = useTRPC()
 
 let fetchPending = false;
 let  nextCursor: string | null = null;
 async function fetchEpisodes() {
     fetchPending = true;
-    const response = await client.query('episode.feed', { cursor: nextCursor }, { context: {}});
+    const response = await client.episodes.feed.query({ cursor: nextCursor });
 
     nextCursor = response.nextCursor;
 

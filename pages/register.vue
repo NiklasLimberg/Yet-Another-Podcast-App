@@ -60,14 +60,14 @@
 </template>
   
 <script lang="ts" setup>
-const client = useClient()
+const client = useTRPC()
 
 const username = ref('')
 const email = ref('')
 const password = ref('')
 
 async function register() {
-    await client.mutation('user.register', { 
+    await client.user.register.mutate({ 
         username: username.value,
         email: email.value,
         password: password.value

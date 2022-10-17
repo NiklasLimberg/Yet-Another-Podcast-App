@@ -49,13 +49,13 @@
 </template>
   
 <script lang="ts" setup>
-const client = useClient()
+const client = useTRPC()
 
 const email = ref('')
 const password = ref('')
 
 async function login() {
-    await client.mutation('user.login', { 
+    await client.user.login.mutate({ 
         email: email.value,
         password: password.value
     })

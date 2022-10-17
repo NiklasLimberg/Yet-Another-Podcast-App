@@ -13,10 +13,11 @@
 </template>
 
 <script lang="ts" setup>
+const client = useTRPC();
 
 const {
     data,
     pending,
     error,
-} = await useAsyncQuery(['user.sessions'])
+} = await useAsyncData(() => client.user.sessions.query());
 </script>
