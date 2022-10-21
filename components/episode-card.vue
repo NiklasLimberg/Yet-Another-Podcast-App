@@ -6,7 +6,9 @@
         <div class="title-container">
             <img :src="episode.image">
             <div>
-                <div class="series-title">{{ episode.series.title }}</div>
+                <div class="series-title">
+                    {{ episode.series.title }}
+                </div>
                 <div>{{ new Date(episode.pubDate).toLocaleString() }}</div>
             </div>
         </div>
@@ -16,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Episode } from '~types/Episode';
+import type { Episode } from '~/types/Episode';
 
 const audioPlayer = useAudioSession();
 

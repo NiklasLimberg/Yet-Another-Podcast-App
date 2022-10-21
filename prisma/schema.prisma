@@ -51,10 +51,11 @@ model SubscriptionToSeries {
 model PlaybackProgress {
   userId    String
   episodeId String
+  progress  Int
   created   DateTime @default(now())
   updated   DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
-  episodes  Episode  @relation(fields: [episodeId], references: [id])
+  episode   Episode  @relation(fields: [episodeId], references: [id])
 
   @@id([userId, episodeId])
 }

@@ -16,15 +16,15 @@ import { vInfiniteScroll } from '@vueuse/components'
 
 const client = useTRPC()
 
-let fetchPending = false;
-let  nextCursor: string | null = null;
+const fetchPending = ref(false);
+const nextCursor= ref<string | null>(null) ;
 async function fetchEpisodes() {
-    fetchPending = true;
-    const response = await client.episodes.feed.query({ cursor: nextCursor });
+    fetchPending.value = true;
+    const response = await client.episodes.feed.query({ cursor: nextCursor.value });
 
-    nextCursor = response.nextCursor;
+    nextCursor.value = response.nextCursor;
 
-    fetchPending = false;
+    fetchPending.value = false;
     return response.items;
 }
 
