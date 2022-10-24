@@ -1,5 +1,5 @@
 import type { inferAsyncReturnType } from '@trpc/server';
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 
 import { TRPCError } from '@trpc/server'
 import { castToString } from '../validators';
@@ -11,7 +11,7 @@ import {
     deleteRefreshToken
 } from './tokenFunctions'
 
-export const createContext = async (event: CompatibilityEvent) => {
+export const createContext = async (event: H3Event) => {
     const accessToken = getCookie(event, 'accessToken');
     
     if (!accessToken) {
@@ -47,7 +47,7 @@ export const createContext = async (event: CompatibilityEvent) => {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
             
-        return { event, userId };
+        return { event, userId: userId };
     }
 }
 

@@ -1,8 +1,7 @@
 import type { NitroApp } from 'nitropack'
 import { resolveHTTPResponse } from '@trpc/server'
 import { createURL } from 'ufo'
-import { readBody, setHeader, getMethod } from 'h3'
-import type { CompatibilityEvent } from 'h3'
+import { readBody, setHeader } from 'h3'
 
 import { appRouter } from '../trpc/routers/appRouter';
 import { createContext } from '../trpc/context';
@@ -11,13 +10,13 @@ export default function (nitroApp: NitroApp) {
     const trpcEndpoint = '/api/trpc'
     const pathSliceLength = trpcEndpoint.length + 1
 
-    nitroApp.router.add(`${trpcEndpoint}/*`, async function (event: CompatibilityEvent) {
+    nitroApp.router.add(`${trpcEndpoint}/*`, eventHandler(async function (event) {
         if (typeof event.req.url !== 'string') {
             throw new TypeError('[nuxt-trcp-adapter] req.url is not a string')
         }
 
         const url = createURL(event.req.url)
-        const method = getMethod(event.req)
+        const method = event.req.method ?? 'GET'
 
         const response = await resolveHTTPResponse({
             router: appRouter,
@@ -44,5 +43,5 @@ export default function (nitroApp: NitroApp) {
         }
 
         return body
-    }, ['get', 'post'])
+    }), ['get', 'post'])
 }

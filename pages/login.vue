@@ -49,7 +49,7 @@
 </template>
   
 <script lang="ts" setup>
-const client = useTRPC()
+import { client } from '~~/utils/trpcClient'
 
 const email = ref('')
 const password = ref('')

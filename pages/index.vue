@@ -12,12 +12,12 @@
 </template>
 
 <script setup lang="ts">
+import { client } from '~~/utils/trpcClient'
 import { vInfiniteScroll } from '@vueuse/components'
 
-const client = useTRPC()
-
 const fetchPending = ref(false);
-const nextCursor= ref<string | null>(null) ;
+const nextCursor = ref<string|undefined>(undefined);
+
 async function fetchEpisodes() {
     fetchPending.value = true;
     const response = await client.episodes.feed.query({ cursor: nextCursor.value });
@@ -25,7 +25,7 @@ async function fetchEpisodes() {
     nextCursor.value = response.nextCursor;
 
     fetchPending.value = false;
-    return response.items;
+    return response.episodes;
 }
 
 const episodes = ref(await fetchEpisodes());

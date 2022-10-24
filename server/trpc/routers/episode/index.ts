@@ -1,18 +1,27 @@
 import { router, publicProcedure } from '~/server/trpc';
 import prisma from '~/server/prisma-db';
 import zod from 'zod';
+
 import { episodeOutput } from '~~/types/Episode';
+import { seriesOutput } from '~~/types/Series';
 
 export const episodeRouter = router({
     feed: publicProcedure.input(
         zod.object({
-            limit: zod.number().min(1).max(100).nullish(),
-            cursor: zod.string().nullish(),
+            limit: zod.number().min(1).max(100).optional(),
+            cursor: zod.string().optional(),
         })
     ).output(
         zod.object({
-            episodes: zod.array(episodeOutput),
-            nextItem: zod.string().optional(),
+            episodes: zod.array(
+                episodeOutput.extend({
+                    series: seriesOutput.pick({
+                        id: true,
+                        title: true,
+                    })
+                })
+            ),
+            nextCursor: zod.string().optional(),
             total: zod.number()
         })
     ).query(async ({ input, ctx }) => {
@@ -34,7 +43,7 @@ export const episodeRouter = router({
                         progress: true
                     },
                     where: {
-                        userId: ctx.userId ?? null,
+                        userId: ctx.userId,
                     }
                 },
                 keywords: {
@@ -51,9 +60,10 @@ export const episodeRouter = router({
 
         const totalRequest = prisma.episode.count();
         const [items, total] = await Promise.all([itemsRequest, totalRequest]);
-        let nextCursor: string | null = null;
+        
+        let nextCursor: string | undefined = undefined;
         if (items.length > limit) {
-            nextCursor = items.at(-1)?.id ?? null;
+            nextCursor = items.at(-1)?.id;
         }
 
         const episodes = items.map((episode) => {

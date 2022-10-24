@@ -3,7 +3,7 @@ import browser from 'browser-detect'
 
 import { PrismaClient } from '@prisma/client'
 import { v4 as generateUUID } from 'uuid'
-import type { AccessTokenContent, RefreshTokenContent }  from '../types/JsonWebToken'
+import type { AccessTokenContent, RefreshTokenContent }  from '~~/types/JsonWebToken'
 
 const prisma = new PrismaClient()
 

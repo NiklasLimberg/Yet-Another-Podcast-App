@@ -1,7 +1,6 @@
 import zod from 'zod';
 
 import { creatorOutput } from './Creator';
-import { keywordOutput } from './Keyword';
 
 export const seriesOutput = zod.object({
     id: zod.string(),
@@ -16,7 +15,6 @@ export const seriesOutput = zod.object({
     created: zod.date(),
     updated: zod.date().optional(),
     creator: creatorOutput,
-    keywords: keywordOutput.array(),
 });
 
 export type Series = zod.infer<typeof seriesOutput>;
