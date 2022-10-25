@@ -1,5 +1,7 @@
 import zod from 'zod';
 
+import { seriesOutput } from './Series';
+
 export const episodeOutput = zod.object({
     id: zod.string(),
     guid: zod.string(),
@@ -16,4 +18,12 @@ export const episodeOutput = zod.object({
     playbackProgress: zod.number(),
 });
 
+export const episodeWithSeriesOutput = episodeOutput.extend({
+    series: seriesOutput.pick({
+        id: true,
+        title: true,
+    })
+})
+
 export type Episode = zod.infer<typeof episodeOutput>;
+export type EpisodeWithSeries = zod.infer<typeof episodeWithSeriesOutput>;

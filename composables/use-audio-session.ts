@@ -1,12 +1,19 @@
-import { Episode } from '~types/Episode';
+interface MediaInput {
+    title: string;
+    seriesTitle: string;
+    image: string;
+    enclosure: string;
+    duration: number;
+    progress: number;
+}
 
 const audioElement = new Audio();
 const mediaSession = navigator.mediaSession;
 
-const playingMedia = ref<Episode | undefined>()
+const playingMedia = ref<MediaInput | undefined>()
 
 
-function setMedia(episode: Episode, options: { autoPlay: boolean } = { autoPlay: false }): void {
+function setMedia(episode: MediaInput, options: { autoPlay: boolean } = { autoPlay: false }): void {
     const { autoPlay } = options;
 
     audioElement.src = episode.enclosure;
@@ -21,6 +28,12 @@ function setMedia(episode: Episode, options: { autoPlay: boolean } = { autoPlay:
         artwork: [
             { src: episode.image }
         ]
+    });
+
+    mediaSession.setPositionState({
+        duration: episode.duration,
+        playbackRate: 1,
+        position: episode.progress,
     });
     
 

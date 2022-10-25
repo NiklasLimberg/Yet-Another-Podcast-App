@@ -18,16 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import type { Episode } from '~/types/Episode';
+import type { EpisodeWithSeries } from '~/types/Episode';
 
 const audioPlayer = useAudioSession();
 
 const props = defineProps<{
-  episode: Episode
+  episode: EpisodeWithSeries
 }>()
 
 function setPlaying() {
-    audioPlayer.setMedia(props.episode);
+    audioPlayer.setMedia({
+        title: props.episode.title,
+        enclosure: props.episode.enclosure,
+        seriesTitle: props.episode.series.title,
+        image: props.episode.image,
+        duration: props.episode.duration,
+        progress: props.episode.playbackProgress,
+    });
 }
 </script>
 

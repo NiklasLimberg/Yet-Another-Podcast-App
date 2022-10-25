@@ -2,8 +2,7 @@ import { router, publicProcedure } from '~/server/trpc';
 import prisma from '~/server/prisma-db';
 import zod from 'zod';
 
-import { episodeOutput } from '~~/types/Episode';
-import { seriesOutput } from '~~/types/Series';
+import { episodeWithSeriesOutput } from '~~/types/Episode';
 
 export const episodeRouter = router({
     feed: publicProcedure.input(
@@ -14,12 +13,7 @@ export const episodeRouter = router({
     ).output(
         zod.object({
             episodes: zod.array(
-                episodeOutput.extend({
-                    series: seriesOutput.pick({
-                        id: true,
-                        title: true,
-                    })
-                })
+                episodeWithSeriesOutput
             ),
             nextCursor: zod.string().optional(),
             total: zod.number()
