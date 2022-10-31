@@ -5,10 +5,16 @@ export default defineNuxtConfig({
     runtimeConfig: {
         domain: '',
     },
+    imports: {
+        dirs: ['store'],
+    },
     typescript: {
         strict: true,
         shim: false,
     },
+    modules: [
+        '@pinia/nuxt'
+    ],
     buildModules: [
         '@nuxtjs/google-fonts'
     ],
@@ -20,5 +26,4 @@ export default defineNuxtConfig({
             Inter: true,
         }
     },
-    ssr: false
 })

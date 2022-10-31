@@ -31,7 +31,7 @@ async function fetchEpisodes() {
 const episodes = ref(await fetchEpisodes());
 
 async function onLoadMore() {
-    if(fetchPending) {
+    if(fetchPending.value) {
         return
     }
 
@@ -40,7 +40,6 @@ async function onLoadMore() {
 </script>
 
 <style scoped>
-
 @media (min-width: 1024px) {
     .infinite-container {
         width: 620px;

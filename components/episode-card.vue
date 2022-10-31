@@ -9,7 +9,7 @@
                 <div class="series-title">
                     {{ episode.series.title }}
                 </div>
-                <div>{{ new Date(episode.pubDate).toLocaleString() }}</div>
+                <div>{{ episode.pubDate.toLocaleString('de-DE') }}</div>
             </div>
         </div>
         <h3>{{ episode.title }}</h3>
@@ -20,21 +20,21 @@
 <script setup lang="ts">
 import type { EpisodeWithSeries } from '~/types/Episode';
 
-const audioPlayer = useAudioSession();
+const mediaSessionStore = useMediaSessionStore();
 
 const props = defineProps<{
   episode: EpisodeWithSeries
 }>()
 
 function setPlaying() {
-    audioPlayer.setMedia({
+    mediaSessionStore.playingMedia = {
         title: props.episode.title,
         enclosure: props.episode.enclosure,
         seriesTitle: props.episode.series.title,
         image: props.episode.image,
         duration: props.episode.duration,
         progress: props.episode.playbackProgress,
-    });
+    };
 }
 </script>
 

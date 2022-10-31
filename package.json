@@ -17,6 +17,7 @@
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.4.3",
     "@prisma/client": "^4.4.0",
     "@trpc/client": "^10.0.0-proxy-beta.21",
     "@trpc/server": "^10.0.0-proxy-beta.21",
@@ -26,6 +27,7 @@
     "browser-detect": "^0.2.28",
     "fast-xml-parser": "^4.0.8",
     "jsonwebtoken": "^8.5.1",
+    "pinia": "^2.0.23",
     "superjson": "^1.10.1",
     "uuid": "^9.0.0",
     "zod": "^3.19.1"
