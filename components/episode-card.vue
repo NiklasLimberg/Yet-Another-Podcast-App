@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="card"
-        @click="setPlaying"
-    >
+    <div>
         <div class="title-container">
             <img :src="episode.image">
             <div>
@@ -13,6 +10,33 @@
             </div>
         </div>
         <h3>{{ episode.title }}</h3>
+        <div class="action-container">
+            <button
+                type="button"
+                class="play-button"
+                @click="isPlaying ? pausePlayBack() : startPlayBack()"
+            >
+                <icon-play
+                    v-if="!isPlaying || mediaSessionStore.isPaused"
+                />
+                <icon-pause
+                    v-else
+                />
+                <span>{{ timeLeft }} min left</span>
+            </button>
+            <button
+                type="button"
+                class="remove-border"
+            >
+                <icon-download />
+            </button>
+            <button
+                type="button"
+                class="remove-border"
+            >
+                <icon-playlist />
+            </button>
+        </div>
         <span v-html="episode.descriptionHTML" />
     </div>
 </template>
@@ -26,15 +50,27 @@ const props = defineProps<{
   episode: EpisodeWithSeries
 }>()
 
-function setPlaying() {
-    mediaSessionStore.playingMedia = {
-        title: props.episode.title,
-        enclosure: props.episode.enclosure,
-        seriesTitle: props.episode.series.title,
-        image: props.episode.image,
-        duration: props.episode.duration,
-        progress: props.episode.playbackProgress,
-    };
+const isPlaying = computed(() => mediaSessionStore.isCurrentlyPlaying(props.episode.id));
+const timeLeft = computed(() => Math.floor((props.episode.duration - props.episode.playbackProgress ?? 0) / 60 % 60));
+
+function startPlayBack() {
+    if(!mediaSessionStore.isCurrentlyPlaying(props.episode.id)) {
+        mediaSessionStore.playingMedia = {
+            id: props.episode.id,
+            title: props.episode.title,
+            enclosure: props.episode.enclosure,
+            seriesTitle: props.episode.series.title,
+            image: props.episode.image,
+            duration: props.episode.duration,
+            progress: props.episode.playbackProgress,
+        };  
+    } else {
+        mediaSessionStore.isPaused = false;
+    }
+}
+
+function pausePlayBack() {
+    mediaSessionStore.isPaused = true;
 }
 </script>
 
@@ -43,12 +79,27 @@ function setPlaying() {
   display: flex;
   gap: 16px;
 }
-.series-title {
-    margin-bottom: 8px;
-}
 
 img {
   height: 44px;
   width: 44px;
+}
+
+.action-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.play-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.remove-border {
+    border: none;
+    padding: 0;
 }
 </style>

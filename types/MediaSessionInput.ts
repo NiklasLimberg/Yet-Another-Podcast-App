@@ -1,4 +1,5 @@
 export interface MediaSessionInput {
+    id: string;
     title: string;
     seriesTitle: string;
     image: string;

@@ -108,22 +108,44 @@ watch(() => audioSessionStore.playingMedia, (media) => {
         position: media.progress,
     });
 
-    audioElement.play();
+    audioElement.play()
+});
+
+watch(() => audioSessionStore.isPaused, (isPaused) => {
+    isPaused ? audioElement.pause() : audioElement.play();
 });
 
 audioElement.onwaiting = () => { audioSessionStore.isBuffering = true }
 audioElement.onplaying = () => { audioSessionStore.isBuffering = false }
 
-audioElement.ontimeupdate = () => { 
-    audioSessionStore.progress = Math.round(audioElement.currentTime)
+
+audioElement.onseeking = () => { 
+    audioSessionStore.isSeeking = true
+}
+audioElement.onseeked = () => { 
+    audioSessionStore.isSeeking = false
+}
+
+audioElement.ontimeupdate = () => {
+    if(!audioSessionStore.isSeeking) {
+        return
+    }
+
+    audioSessionStore.progress = Math.floor(audioElement.currentTime);
 }
 
 function skipTo(seconds: number) {
-    audioElement.currentTime = seconds;
+    window.requestAnimationFrame(()=> {
+        if(audioSessionStore.isPaused) {
+            audioSessionStore.progress = seconds;
+        }
+
+        audioElement.currentTime = seconds;
+    });    
 }
 
 function skip(seconds: number) {
-    audioElement.currentTime += seconds;
+    skipTo(audioElement.currentTime + seconds);
 }
 
 audioElement.onplay = () => audioSessionStore.isPaused = false;
