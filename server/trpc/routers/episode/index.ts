@@ -9,15 +9,15 @@ export const episodeRouter = router({
         zod.object({
             limit: zod.number().min(1).max(100).optional(),
             cursor: zod.string().optional(),
-        })
+        }),
     ).output(
         zod.object({
             episodes: zod.array(
-                episodeWithSeriesOutput
+                episodeWithSeriesOutput,
             ),
             nextCursor: zod.string().optional(),
-            total: zod.number()
-        })
+            total: zod.number(),
+        }),
     ).query(async ({ input, ctx }) => {
         const limit = input.limit ?? 50;
         const { cursor } = input;
@@ -30,27 +30,27 @@ export const episodeRouter = router({
                         id: true,
                         title: true,
                         image: true,
-                    }
+                    },
                 },
                 playbacks: {
                     select: {
-                        progress: true
+                        progress: true,
                     },
                     where: {
                         userId: ctx.userId,
-                    }
+                    },
                 },
                 keywords: {
                     select: {
                         id: true,
                         name: true,
-                    }
-                }
+                    },
+                },
             },
             orderBy: {
                 updated: 'asc',
             },
-        })
+        });
 
         const totalRequest = prisma.episode.count();
         const [items, total] = await Promise.all([itemsRequest, totalRequest]);
@@ -66,7 +66,7 @@ export const episodeRouter = router({
             return {
                 ...episode,
                 playbackProgress: playback?.progress ?? 0,
-            }
+            };
         });
 
         return {
@@ -75,4 +75,4 @@ export const episodeRouter = router({
             nextCursor,
         };
     }),
-})
+});

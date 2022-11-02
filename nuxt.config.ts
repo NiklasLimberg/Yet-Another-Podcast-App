@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from 'nuxt/config'
+import { defineNuxtConfig } from 'nuxt/config';
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -13,17 +13,17 @@ export default defineNuxtConfig({
         shim: false,
     },
     modules: [
-        '@pinia/nuxt'
+        '@pinia/nuxt',
     ],
     buildModules: [
-        '@nuxtjs/google-fonts'
+        '@nuxtjs/google-fonts',
     ],
     css: [
-        '@/assets/css/global.css'
+        '@/assets/css/global.css',
     ],
     googleFonts: {
         families: {
             Inter: true,
-        }
+        },
     },
-})
+});

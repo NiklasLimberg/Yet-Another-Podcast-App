@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { client } from '~~/utils/trpcClient'
+import { client } from '~~/utils/trpcClient';
 
 const {
     data,

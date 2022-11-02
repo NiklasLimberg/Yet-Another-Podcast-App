@@ -60,17 +60,17 @@
 </template>
   
 <script lang="ts" setup>
-import { client } from '~~/utils/trpcClient'
+import { client } from '~~/utils/trpcClient';
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
+const username = ref('');
+const email = ref('');
+const password = ref('');
 
 async function register() {
     await client.user.register.mutate({ 
         username: username.value,
         email: email.value,
-        password: password.value
-    })
+        password: password.value,
+    });
 }
 </script>

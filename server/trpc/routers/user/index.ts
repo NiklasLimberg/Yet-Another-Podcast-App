@@ -8,7 +8,7 @@ import zod from 'zod';
 import {
     generateAccessToken,
     deleteRefreshToken,
-    generateRefreshToken
+    generateRefreshToken,
 } from '../../tokenFunctions';
 
 export const userRouter = router({
@@ -25,17 +25,17 @@ export const userRouter = router({
         try {
             return await prisma.user.findUniqueOrThrow({ 
                 where: { 
-                    id: userId
+                    id: userId,
                 }, 
                 select: { 
-                    email: true, username: true
-                }
+                    email: true, username: true,
+                },
             });
         } catch (error) {
             throw new TRPCError({
                 code: 'INTERNAL_SERVER_ERROR',
                 message: 'Could not find user',
-            })
+            });
         }
     }),
 
@@ -66,23 +66,23 @@ export const userRouter = router({
             throw new TRPCError({
                 code: 'INTERNAL_SERVER_ERROR',
                 message: 'Could not find sessions',
-            })
+            });
         }
     }),
 
     login: publicProcedure.input(
         zod.object({
             email: zod.string().email(),
-            password: zod.string()
-        })
+            password: zod.string(),
+        }),
     ).mutation(async ({ input, ctx }) => {
         const { email, password } = input;
-        const user = await prisma.user.findUniqueOrThrow({ where: { email } })
+        const user = await prisma.user.findUniqueOrThrow({ where: { email } });
 
-        const match = await bcrypt.compare(password, user.password)
+        const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
-            throw new Error('Password does not match')
+            throw new Error('Password does not match');
         }
 
         setCookie(ctx.event, 'accessToken', generateAccessToken(user.id), {
@@ -103,19 +103,19 @@ export const userRouter = router({
             email: zod.string().email(),
             password: zod.string().min(8).max(256),
             username: zod.string().min(8).max(256),
-        })
+        }),
     ).mutation(async ({ input, ctx }) => {
         const { email, password, username } = input;
 
-        const hashedPassword = await bcrypt.hash(password, 12)
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = await prisma.user.create({
             data: {
                 email,
                 password: hashedPassword,
                 username,
-            }
-        })
+            },
+        });
     
         setCookie(ctx.event, 'accessToken', generateAccessToken(user.id), {
             httpOnly: true,
@@ -144,5 +144,5 @@ export const userRouter = router({
         deleteCookie(ctx.event, 'accessToken');
         deleteCookie(ctx.event, 'refreshToken');
     }),
-})
+});
 

@@ -53,16 +53,16 @@
             class="seek-slider" 
             type="range"
             :max="audioSessionStore.playingMedia.duration"
-            :value="audioSessionStore.progress"
+            :value="playbackProgress"
             min="0"
-            @change="setProgress"
+            @change="seek"
         >
         <div class="space-between">
             <div>
-                {{ formatTime(audioSessionStore.progress) }}
+                {{ formatTime(playbackProgress) }}
             </div>
             <div>
-                - {{ formatTime(audioSessionStore.playingMedia.duration - audioSessionStore.progress) }}
+                - {{ formatTime(audioSessionStore.playingMedia.duration - playbackProgress) }}
             </div>
         </div>
     </div>
@@ -70,6 +70,7 @@
 
 <script setup lang="ts">
 const audioSessionStore = useMediaSessionStore();
+const playbackProgressStore = usePlaybackProgressStore();
 
 const audioElement = new Audio();
 const mediaSession = navigator.mediaSession;
@@ -78,13 +79,26 @@ function formatTime(seconds: number) {
     return [
         Math.floor(seconds / 60 / 60),
         Math.floor(seconds / 60 % 60),
-        Math.floor(seconds % 60)
-    ].join(':').replace(/\b(\d)\b/g, '0$1')
+        Math.floor(seconds % 60),
+    ].join(':').replace(/\b(\d)\b/g, '0$1');
 }
 
-function setProgress(ev: Event) {
-    skipTo((ev.target as HTMLInputElement).valueAsNumber);
-}
+const playbackProgress = computed({ 
+    get: () => {
+        if(!audioSessionStore.playingMedia) {
+            return 0;
+        }
+
+        return playbackProgressStore.getProgress(audioSessionStore.playingMedia.id)?.progress ?? 0;
+    }, 
+    set: (progress: number) => {
+        if(!audioSessionStore.playingMedia) {
+            return;
+        }
+
+        playbackProgressStore.setProgress(audioSessionStore.playingMedia.id, progress);
+    },
+});
 
 watch(() => audioSessionStore.playingMedia, (media) => {
     if(!media) {
@@ -98,7 +112,7 @@ watch(() => audioSessionStore.playingMedia, (media) => {
         title: media.title,
         artist: media.seriesTitle,
         artwork: [
-            { src: media.image }
+            { src: media.image },
         ],
     });
 
@@ -108,40 +122,46 @@ watch(() => audioSessionStore.playingMedia, (media) => {
         position: media.progress,
     });
 
-    audioElement.play()
+    audioElement.play();
 });
 
 watch(() => audioSessionStore.isPaused, (isPaused) => {
     isPaused ? audioElement.pause() : audioElement.play();
 });
 
-audioElement.onwaiting = () => { audioSessionStore.isBuffering = true }
-audioElement.onplaying = () => { audioSessionStore.isBuffering = false }
+audioElement.onwaiting = () => { audioSessionStore.isBuffering = true; };
+audioElement.onplaying = () => { audioSessionStore.isBuffering = false; };
 
 
 audioElement.onseeking = () => { 
-    audioSessionStore.isSeeking = true
-}
+    audioSessionStore.isSeeking = true;
+};
 audioElement.onseeked = () => { 
-    audioSessionStore.isSeeking = false
-}
+    audioSessionStore.isSeeking = false;
+};
 
 audioElement.ontimeupdate = () => {
-    if(!audioSessionStore.isSeeking) {
-        return
+    if(audioSessionStore.isSeeking || !audioSessionStore.playingMedia) {
+        return;
     }
 
-    audioSessionStore.progress = Math.floor(audioElement.currentTime);
-}
+    console.log('setting progress', audioElement.currentTime);
+
+    playbackProgressStore.setProgress(audioSessionStore.playingMedia.id, audioElement.currentTime);
+};
 
 function skipTo(seconds: number) {
     window.requestAnimationFrame(()=> {
         if(audioSessionStore.isPaused) {
-            audioSessionStore.progress = seconds;
+            playbackProgress.value = seconds;
         }
 
         audioElement.currentTime = seconds;
     });    
+}
+
+function seek(ev: Event) {
+    skipTo((ev.target as HTMLInputElement).valueAsNumber);
 }
 
 function skip(seconds: number) {
@@ -152,11 +172,11 @@ audioElement.onplay = () => audioSessionStore.isPaused = false;
 audioElement.onpause = () => audioSessionStore.isPaused = true;
 
 function pause() {
-    audioElement.pause()
+    audioElement.pause();
 }
 
 function play() {
-    audioElement.play()
+    audioElement.play();
 }
 
 mediaSession.setActionHandler('play', ({action}) => { 

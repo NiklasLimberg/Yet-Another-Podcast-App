@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { client } from '~~/utils/trpcClient'
-import { vInfiniteScroll } from '@vueuse/components'
+import { client } from '~~/utils/trpcClient';
+import { vInfiniteScroll } from '@vueuse/components';
 
 const fetchPending = ref(false);
 const nextCursor = ref<string|undefined>(undefined);
@@ -32,10 +32,10 @@ const episodes = ref(await fetchEpisodes());
 
 async function onLoadMore() {
     if(fetchPending.value) {
-        return
+        return;
     }
 
-    episodes.value = episodes.value.concat(await fetchEpisodes())
+    episodes.value = episodes.value.concat(await fetchEpisodes());
 }
 </script>
 

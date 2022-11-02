@@ -34,5 +34,5 @@ withDefaults(defineProps<{
     size: 24,
     strokeWidth: 8,
     strokeColor: '#F9FAFB',
-})
+});
 </script>

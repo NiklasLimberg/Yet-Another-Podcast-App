@@ -1,15 +1,15 @@
 import type { inferAsyncReturnType } from '@trpc/server';
-import type { H3Event } from 'h3'
+import type { H3Event } from 'h3';
 
-import { TRPCError } from '@trpc/server'
+import { TRPCError } from '@trpc/server';
 import { castToString } from '../validators';
 import { 
     generateAccessToken, 
     verifyAccessToken,
     generateRefreshToken,
     verifyRefreshToken,
-    deleteRefreshToken
-} from './tokenFunctions'
+    deleteRefreshToken,
+} from './tokenFunctions';
 
 export const createContext = async (event: H3Event) => {
     const accessToken = getCookie(event, 'accessToken');
@@ -49,6 +49,6 @@ export const createContext = async (event: H3Event) => {
             
         return { event, userId: userId };
     }
-}
+};
 
 export type Context = inferAsyncReturnType<typeof createContext>;

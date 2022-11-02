@@ -1,8 +1,8 @@
-import type { AppRouter } from '../server/trpc/routers/appRouter'
+import type { AppRouter } from '../server/trpc/routers/appRouter';
 
-import { createTRPCProxyClient , httpBatchLink } from '@trpc/client'
-import  { FetchError } from 'ohmyfetch'
-import superjson from 'superjson'
+import { createTRPCProxyClient , httpBatchLink } from '@trpc/client';
+import  { FetchError } from 'ohmyfetch';
+import superjson from 'superjson';
 
 
 export const client = createTRPCProxyClient<AppRouter>({
@@ -11,21 +11,25 @@ export const client = createTRPCProxyClient<AppRouter>({
             url: '/api/trpc',
             fetch: async (input, init) => {
                 try {
-                    const response = await globalThis.$fetch.raw(input.toString(), init)
+                    const response = await globalThis.$fetch.raw(input.toString(), init);
           
                     return {
                         ...response,
-                        json: () => Promise.resolve(response._data)
-                    }
+                        json: () => Promise.resolve(response._data),
+                    };
                 } catch (e) {
                     if (e instanceof FetchError && e.response) {
-                        return e.response
+                        e.response;
                     }
-          
-                    throw e
+
+                    if (e instanceof Response) {
+                        return e;
+                    }
+
+                    throw e;
                 }
             },
-        })
+        }),
     ],
-    transformer: superjson
-})
+    transformer: superjson,
+});

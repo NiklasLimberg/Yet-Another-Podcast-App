@@ -22,8 +22,8 @@ export const episodeWithSeriesOutput = episodeOutput.extend({
     series: seriesOutput.pick({
         id: true,
         title: true,
-    })
-})
+    }),
+});
 
 export type Episode = zod.infer<typeof episodeOutput>;
 export type EpisodeWithSeries = zod.infer<typeof episodeWithSeriesOutput>;

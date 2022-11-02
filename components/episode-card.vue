@@ -37,6 +37,7 @@
                 <icon-playlist />
             </button>
         </div>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-html="episode.descriptionHTML" />
     </div>
 </template>
@@ -45,13 +46,19 @@
 import type { EpisodeWithSeries } from '~/types/Episode';
 
 const mediaSessionStore = useMediaSessionStore();
+const playbackProgressStore = usePlaybackProgressStore();
 
 const props = defineProps<{
   episode: EpisodeWithSeries
-}>()
+}>();
 
-const isPlaying = computed(() => mediaSessionStore.isCurrentlyPlaying(props.episode.id));
-const timeLeft = computed(() => Math.floor((props.episode.duration - props.episode.playbackProgress ?? 0) / 60 % 60));
+
+const isPlaying = computed(() => mediaSessionStore.isCurrentlyPlaying(props.episode.id) && !mediaSessionStore.isPaused);
+const timeLeft = computed(() => {
+    const progress = playbackProgressStore.getProgress(props.episode.id)?.progress ?? props.episode.playbackProgress;
+
+    return Math.floor((props.episode.duration - progress ?? 0) / 60 % 60);
+});
 
 function startPlayBack() {
     if(!mediaSessionStore.isCurrentlyPlaying(props.episode.id)) {
@@ -62,8 +69,8 @@ function startPlayBack() {
             seriesTitle: props.episode.series.title,
             image: props.episode.image,
             duration: props.episode.duration,
-            progress: props.episode.playbackProgress,
-        };  
+            progress: playbackProgressStore.getProgress(props.episode.id)?.progress ?? props.episode.playbackProgress,
+        };
     } else {
         mediaSessionStore.isPaused = false;
     }

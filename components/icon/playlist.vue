@@ -39,6 +39,6 @@ withDefaults(defineProps<{
     size: 24,
     strokeWidth: 8,
     strokeColor: '#F9FAFB',
-    action: 'add'
-})
+    action: 'add',
+});
 </script>

@@ -49,15 +49,15 @@
 </template>
   
 <script lang="ts" setup>
-import { client } from '~~/utils/trpcClient'
+import { client } from '~~/utils/trpcClient';
 
-const email = ref('')
-const password = ref('')
+const email = ref('');
+const password = ref('');
 
 async function login() {
     await client.user.login.mutate({ 
         email: email.value,
-        password: password.value
-    })
+        password: password.value,
+    });
 }
 </script>
