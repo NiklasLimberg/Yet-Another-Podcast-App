@@ -47,6 +47,8 @@ export const usePlaybackProgressStore = defineStore('playback-progress-store', (
 
         if (Math.abs(existingEvent.localState.progress - existingEvent.persistedState.progress) > 20) {
             void persistProgress(episodeId, progress, existingEvent.localState.timestamp);
+
+            existingEvent.persistedState = existingEvent.localState;
         }
     }
 

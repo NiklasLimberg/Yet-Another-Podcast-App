@@ -14,10 +14,10 @@
             <button
                 type="button"
                 class="play-button"
-                @click="isPlaying ? pausePlayBack() : startPlayBack()"
+                @click="changePlayBackState"
             >
                 <icon-play
-                    v-if="!isPlaying || mediaSessionStore.isPaused"
+                    v-if="isPaused"
                 />
                 <icon-pause
                     v-else
@@ -52,32 +52,54 @@ const props = defineProps<{
   episode: EpisodeWithSeries
 }>();
 
+const isSelected = computed(() => mediaSessionStore.playingMedia?.id === props.episode.id);
 
-const isPlaying = computed(() => mediaSessionStore.isCurrentlyPlaying(props.episode.id) && !mediaSessionStore.isPaused);
-const timeLeft = computed(() => {
-    const progress = playbackProgressStore.getProgress(props.episode.id)?.progress ?? props.episode.playbackProgress;
+const isPaused = computed(() => {
+    if (!isSelected.value) {
+        return true;
+    }
 
-    return Math.floor((props.episode.duration - progress ?? 0) / 60 % 60);
+    return mediaSessionStore.isPaused;
 });
 
-function startPlayBack() {
-    if(!mediaSessionStore.isCurrentlyPlaying(props.episode.id)) {
-        mediaSessionStore.playingMedia = {
+const playbackProgress = computed(() => {
+    if (isSelected.value) {
+        return mediaSessionStore.progress;
+    }
+
+    const localState = playbackProgressStore.getProgress(props.episode.id);
+
+    if (localState) {
+        return localState.progress;
+    }
+
+    return props.episode.playbackProgress;
+});
+
+
+const timeLeft = computed(() => {
+    return Math.floor((props.episode.duration - playbackProgress.value) / 60 % 60);
+});
+
+function changePlayBackState() {
+    if(!isPaused.value) {
+        mediaSessionStore.pause();
+        return;
+    }
+
+    if (!isSelected.value) {
+        mediaSessionStore.setPlayingMedia( {
             id: props.episode.id,
             title: props.episode.title,
             enclosure: props.episode.enclosure,
             seriesTitle: props.episode.series.title,
             image: props.episode.image,
             duration: props.episode.duration,
-            progress: playbackProgressStore.getProgress(props.episode.id)?.progress ?? props.episode.playbackProgress,
-        };
-    } else {
-        mediaSessionStore.isPaused = false;
+            progress: unref(playbackProgress.value),
+        });
     }
-}
 
-function pausePlayBack() {
-    mediaSessionStore.isPaused = true;
+    mediaSessionStore.play();
 }
 </script>
 

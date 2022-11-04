@@ -26,4 +26,6 @@ export default defineNuxtConfig({
             Inter: true,
         },
     },
+
+    ssr: false,
 });

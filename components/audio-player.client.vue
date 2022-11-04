@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="audioSessionStore.playingMedia"
+        v-if="audioSession.playingMedia"
         class="container"
     >
         <audio
@@ -10,25 +10,25 @@
         <div class="space-between">
             <div class="description-container">
                 <h3>
-                    {{ audioSessionStore.playingMedia.title }}
+                    {{ audioSession.playingMedia.title }}
                 </h3>
                 <p class="series-title">
-                    {{ audioSessionStore.playingMedia.seriesTitle }}
+                    {{ audioSession.playingMedia.seriesTitle }}
                 </p>
             </div>
             <div class="flex">
                 <button
                     type="button"
                     class="transparent"
-                    @click="skip(-30)"
+                    @click="audioSession.skip(-30)"
                 >
                     <icon-skip-backward />
                 </button>
                 <button
-                    v-if="audioSessionStore.isPaused"
+                    v-if="audioSession.isPaused"
                     type="button"
                     class="transparent"
-                    @click="play()"
+                    @click="audioSession.play()"
                 >
                     <icon-play :size="32" />
                 </button>
@@ -36,14 +36,14 @@
                     v-else
                     type="button"
                     class="transparent"
-                    @click="pause()"
+                    @click="audioSession.pause()"
                 >
                     <icon-pause :size="32" />
                 </button>
                 <button
                     type="button"
                     class="transparent"
-                    @click="skip(30)"
+                    @click="audioSession.skip(30)"
                 >
                     <icon-skip-forward />
                 </button>
@@ -52,28 +52,30 @@
         <input
             class="seek-slider" 
             type="range"
-            :max="audioSessionStore.playingMedia.duration"
-            :value="playbackProgress"
+            :max="audioSession.playingMedia.duration"
+            :value="audioSession.progress"
             min="0"
             @change="seek"
         >
         <div class="space-between">
             <div>
-                {{ formatTime(playbackProgress) }}
+                {{ formatTime(audioSession.progress) }}
             </div>
             <div>
-                - {{ formatTime(audioSessionStore.playingMedia.duration - playbackProgress) }}
+                - {{ formatTime(audioSession.playingMedia?.duration - audioSession.progress) }}
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-const audioSessionStore = useMediaSessionStore();
-const playbackProgressStore = usePlaybackProgressStore();
+const audioSession = useMediaSessionStore();
 
-const audioElement = new Audio();
-const mediaSession = navigator.mediaSession;
+function seek(ev: Event) {
+    audioSession.skipTo((ev.target as HTMLInputElement).valueAsNumber);
+}
+
+
 
 function formatTime(seconds: number) {
     return [
@@ -83,131 +85,6 @@ function formatTime(seconds: number) {
     ].join(':').replace(/\b(\d)\b/g, '0$1');
 }
 
-const playbackProgress = computed({ 
-    get: () => {
-        if(!audioSessionStore.playingMedia) {
-            return 0;
-        }
-
-        return playbackProgressStore.getProgress(audioSessionStore.playingMedia.id)?.progress ?? 0;
-    }, 
-    set: (progress: number) => {
-        if(!audioSessionStore.playingMedia) {
-            return;
-        }
-
-        playbackProgressStore.setProgress(audioSessionStore.playingMedia.id, progress);
-    },
-});
-
-watch(() => audioSessionStore.playingMedia, (media) => {
-    if(!media) {
-        return;
-    }
-    audioElement.src = media.enclosure;
-
-    audioElement.currentTime = media.progress;
-
-    mediaSession.metadata = new MediaMetadata({
-        title: media.title,
-        artist: media.seriesTitle,
-        artwork: [
-            { src: media.image },
-        ],
-    });
-
-    mediaSession.setPositionState({
-        duration: media.duration,
-        playbackRate: 1,
-        position: media.progress,
-    });
-
-    audioElement.play();
-});
-
-watch(() => audioSessionStore.isPaused, (isPaused) => {
-    isPaused ? audioElement.pause() : audioElement.play();
-});
-
-audioElement.onwaiting = () => { audioSessionStore.isBuffering = true; };
-audioElement.onplaying = () => { audioSessionStore.isBuffering = false; };
-
-
-audioElement.onseeking = () => { 
-    audioSessionStore.isSeeking = true;
-};
-audioElement.onseeked = () => { 
-    audioSessionStore.isSeeking = false;
-};
-
-audioElement.ontimeupdate = () => {
-    if(audioSessionStore.isSeeking || !audioSessionStore.playingMedia) {
-        return;
-    }
-
-    console.log('setting progress', audioElement.currentTime);
-
-    playbackProgressStore.setProgress(audioSessionStore.playingMedia.id, audioElement.currentTime);
-};
-
-function skipTo(seconds: number) {
-    window.requestAnimationFrame(()=> {
-        if(audioSessionStore.isPaused) {
-            playbackProgress.value = seconds;
-        }
-
-        audioElement.currentTime = seconds;
-    });    
-}
-
-function seek(ev: Event) {
-    skipTo((ev.target as HTMLInputElement).valueAsNumber);
-}
-
-function skip(seconds: number) {
-    skipTo(audioElement.currentTime + seconds);
-}
-
-audioElement.onplay = () => audioSessionStore.isPaused = false;
-audioElement.onpause = () => audioSessionStore.isPaused = true;
-
-function pause() {
-    audioElement.pause();
-}
-
-function play() {
-    audioElement.play();
-}
-
-mediaSession.setActionHandler('play', ({action}) => { 
-    if(action === 'play') {
-        play();
-    }
-});
-
-mediaSession.setActionHandler('pause', ({action}) => { 
-    if(action === 'pause') {
-        pause();
-    }
-});
-
-mediaSession.setActionHandler('previoustrack', ({action}) => { 
-    if(action === 'previoustrack') {
-        skip(-30);
-    }
-});
-
-mediaSession.setActionHandler('nexttrack',({action}) => { 
-    if(action === 'nexttrack') {
-        skip(30);
-    }
-});
-
-mediaSession.setActionHandler('seekto', ({action, seekTime}) => { 
-    if(action === 'seekto' && seekTime) {
-        skipTo(seekTime);
-    }
-});
 </script>
 
 <style scoped>
