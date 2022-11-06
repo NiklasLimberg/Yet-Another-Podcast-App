@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+import { useAuthStore } from './auth-store';
+
 interface ProgressState {
     progress: number
     timestamp: Date
@@ -15,6 +17,8 @@ interface PlaybackProgressEvent {
 import { client } from '~~/utils/trpcClient';
 
 export const usePlaybackProgressStore = defineStore('playback-progress-store', () => {
+    const authStore = useAuthStore();
+    
     const progressEvents = ref<PlaybackProgressEvent[]>([]);
 
     function getProgress(episodeId: string): ProgressState | undefined {
@@ -53,6 +57,11 @@ export const usePlaybackProgressStore = defineStore('playback-progress-store', (
     }
 
     async function persistProgress(episodeId: string, progress: number, timestamp: Date) {
+        if (!authStore.user) {
+            // todo: fallback to idb
+            return;
+        }
+
         try {
             client.progress.write.mutate({
                 episodeId,

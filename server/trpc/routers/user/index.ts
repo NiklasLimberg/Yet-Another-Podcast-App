@@ -28,7 +28,8 @@ export const userRouter = router({
                     id: userId,
                 }, 
                 select: { 
-                    email: true, username: true,
+                    email: true,
+                    username: true,
                 },
             });
         } catch (error) {
@@ -82,7 +83,10 @@ export const userRouter = router({
         const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
-            throw new Error('Password does not match');
+            throw new TRPCError({
+                code: 'FORBIDDEN',
+                message: 'Invalid credentials',
+            });
         }
 
         setCookie(ctx.event, 'accessToken', generateAccessToken(user.id), {
@@ -95,6 +99,11 @@ export const userRouter = router({
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
+
+        return {
+            username: user.username,
+            email: user.email,
+        };
     }),
 
 
