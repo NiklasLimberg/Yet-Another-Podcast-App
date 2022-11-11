@@ -2,16 +2,12 @@ import { defineStore } from 'pinia';
 
 import { useAuthStore } from './auth-store';
 
-interface ProgressState {
-    progress: number
-    timestamp: Date
-}
-
 
 interface PlaybackProgressEvent {
     episodeId: string
-    localState: ProgressState;
-    persistedState: ProgressState;
+    progress: number;
+    persistedProgress?: number; 
+    date: Date;
 }
 
 import { client } from '~~/utils/trpcClient';
@@ -21,55 +17,51 @@ export const usePlaybackProgressStore = defineStore('playback-progress-store', (
     
     const progressEvents = ref<PlaybackProgressEvent[]>([]);
 
-    function getProgress(episodeId: string): ProgressState | undefined {
-        return progressEvents.value.find(event => event.episodeId == episodeId)?.localState;
+    function getProgress(episodeId: string): number | undefined {
+        return progressEvents.value.find(event => event.episodeId == episodeId)?.progress;
     }
 
-    function setProgress(episodeId: string, progress: number) {
-        const existingEvent = progressEvents.value.find(event => event.episodeId == episodeId);
+    async function setProgress(episodeId: string, progress: number) {
+        const progressEvent = updateProgressEvent(episodeId, progress);
         
-        if (!existingEvent) {
-            progressEvents.value.push({
-                episodeId,
-                localState: {
-                    progress,
-                    timestamp: new Date(),
-                },
-                persistedState: {
-                    progress,
-                    timestamp: new Date(),
-                },
-            });
+        if (!progressEvent.persistedProgress || Math.abs(progress - progressEvent.persistedProgress) > 20) {            
+            await persistProgress(progressEvent);
 
-            return;
+            progressEvent.persistedProgress = progress;
+        }
+    }
+
+    function updateProgressEvent(episodeId: string, progress: number): PlaybackProgressEvent {
+        const progressEvent = progressEvents.value.find(event => event.episodeId == episodeId);
+        
+        if (progressEvent) {
+            progressEvent.progress = progress;
+            return progressEvent;
         }
 
-        existingEvent.localState = {
-            progress,
-            timestamp: new Date(),
+        const newProgressEvent = {
+            episodeId,
+            progress: progress,
+            date: new Date(),
         };
 
-        if (Math.abs(existingEvent.localState.progress - existingEvent.persistedState.progress) > 20) {
-            void persistProgress(episodeId, progress, existingEvent.localState.timestamp);
+        progressEvents.value.push(newProgressEvent);
 
-            existingEvent.persistedState = existingEvent.localState;
-        }
+        return newProgressEvent;
     }
 
-    async function persistProgress(episodeId: string, progress: number, timestamp: Date) {
+    async function persistProgress(progressEvent: PlaybackProgressEvent) {
         if (!authStore.user) {
-            // todo: fallback to idb
             return;
         }
 
         try {
             client.progress.write.mutate({
-                episodeId,
-                progress,
-                eventTimestamp: timestamp,
+                episodeId: progressEvent.episodeId,
+                progress: progressEvent.progress,
+                eventTimestamp: progressEvent.date,
             });
         } catch (error) {
-            // todo: fallback to idb
             console.error(error);
         }
     }

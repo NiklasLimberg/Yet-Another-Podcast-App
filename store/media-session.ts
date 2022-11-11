@@ -6,8 +6,25 @@ import { usePlaybackProgressStore } from './playback-progress-store';
 export const useMediaSessionStore = defineStore('media-session-store', () => {
     const playbackProgressStore = usePlaybackProgressStore();
 
-    const audioElement = new Audio();
-    const mediaSession = navigator.mediaSession;
+    const audioElement = typeof Audio !== 'undefined' ? new Audio() : {
+        play() {
+            throw new Error('Audio not supported in SSR');
+        },
+        pause() {
+            throw new Error('Audio not supported in SSR');
+        },
+        onplay: null,
+        onpause: null,
+        ontimeupdate: null,
+        onseeking: null,
+        onseeked: null,
+        onwaiting: null,
+        onplaying: null,
+        src: '',
+        currentTime: 0,
+        duration: 0,
+    };
+    const mediaSession = typeof navigator !== 'undefined' ? navigator.mediaSession : undefined;
 
     const playingMedia = ref<MediaSessionInput | null>(null);
     const isPaused = ref(true);
@@ -19,20 +36,22 @@ export const useMediaSessionStore = defineStore('media-session-store', () => {
         audioElement.src = media.enclosure;
     
         audioElement.currentTime = media.progress;
+
+        if(mediaSession) {
+            mediaSession.metadata = new MediaMetadata({
+                title: media.title,
+                artist: media.seriesTitle,
+                artwork: [
+                    { src: media.image },
+                ],
+            });
     
-        mediaSession.metadata = new MediaMetadata({
-            title: media.title,
-            artist: media.seriesTitle,
-            artwork: [
-                { src: media.image },
-            ],
-        });
-    
-        mediaSession.setPositionState({
-            duration: media.duration,
-            playbackRate: 1,
-            position: media.progress,
-        });
+            mediaSession.setPositionState({
+                duration: media.duration,
+                playbackRate: 1,
+                position: media.progress,
+            });
+        }
 
         playingMedia.value = media;
     }
@@ -48,20 +67,20 @@ export const useMediaSessionStore = defineStore('media-session-store', () => {
     };
 
     audioElement.ontimeupdate = () => {
-        if(!playingMedia.value) {
-            return;
-        }
+        nextTick(() => {
+            if(!playingMedia.value || isSeeking.value) {
+                return;
+            }
 
-        playbackProgressStore.setProgress(playingMedia.value.id, Math.floor(audioElement.currentTime));
-        progress.value = audioElement.currentTime;
+            playbackProgressStore.setProgress(playingMedia.value.id, Math.floor(audioElement.currentTime));
+            progress.value = audioElement.currentTime;
+        });
     };
 
     function skipTo(seconds: number) {
-        window.requestAnimationFrame(()=> {
-            audioElement.currentTime = seconds;
-        });    
+        isSeeking.value = true;
+        audioElement.currentTime = seconds;
     }
-
 
     function skip(seconds: number) {
         skipTo(audioElement.currentTime + seconds);
@@ -78,53 +97,54 @@ export const useMediaSessionStore = defineStore('media-session-store', () => {
         audioElement.pause();
     }
 
-    mediaSession.setActionHandler('play', ({action}) => { 
-        if(action !== 'play') {
-            return;
-        }
+    if(mediaSession) {
+        mediaSession.setActionHandler('play', ({action}) => { 
+            if(action !== 'play') {
+                return;
+            }
 
-        play();
-    });
+            play();
+        });
 
-    mediaSession.setActionHandler('pause', ({action}) => { 
-        if(action !== 'pause') {
-            return;
-        }
+        mediaSession.setActionHandler('pause', ({action}) => { 
+            if(action !== 'pause') {
+                return;
+            }
 
-        pause();
-    });
+            pause();
+        });
 
-    mediaSession.setActionHandler('previoustrack', ({action}) => { 
-        if(action !== 'previoustrack') {
-            return;
-        }
+        mediaSession.setActionHandler('previoustrack', ({action}) => { 
+            if(action !== 'previoustrack') {
+                return;
+            }
 
-        skip(-30);
-    });
+            skip(-30);
+        });
 
-    mediaSession.setActionHandler('nexttrack',({action}) => { 
-        if(action !== 'nexttrack') {
-            return;
-        }
+        mediaSession.setActionHandler('nexttrack',({action}) => { 
+            if(action !== 'nexttrack') {
+                return;
+            }
 
-        skip(30);
-    });
+            skip(30);
+        });
 
-    mediaSession.setActionHandler('seekto', ({action, seekTime}) => { 
-        if(action !== 'seekto' || !seekTime) {
-            return;
-        }
+        mediaSession.setActionHandler('seekto', ({action, seekTime}) => { 
+            if(action !== 'seekto' || !seekTime) {
+                return;
+            }
 
-        skipTo(seekTime);
-    });
-    
+            skipTo(seekTime);
+        });
+    }
     
     return { 
-        playingMedia: readonly(playingMedia),
-        progress: readonly(progress),
-        isPaused: readonly(isPaused),
-        isSeeking: readonly(isSeeking),
-        isBuffering: readonly(isBuffering),
+        playingMedia,
+        progress,
+        isPaused,
+        isSeeking,
+        isBuffering,
         setPlayingMedia,
         play,
         pause,

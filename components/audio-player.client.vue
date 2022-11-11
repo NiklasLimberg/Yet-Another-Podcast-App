@@ -3,10 +3,6 @@
         v-if="audioSession.playingMedia"
         class="container"
     >
-        <audio
-            ref="audioElement"
-            preload="metadata"
-        />
         <div class="space-between">
             <div class="description-container">
                 <h3>
@@ -55,7 +51,7 @@
             :max="audioSession.playingMedia.duration"
             :value="audioSession.progress"
             min="0"
-            @change="seek"
+            @click="seek"
         >
         <div class="space-between">
             <div>
@@ -74,8 +70,6 @@ const audioSession = useMediaSessionStore();
 function seek(ev: Event) {
     audioSession.skipTo((ev.target as HTMLInputElement).valueAsNumber);
 }
-
-
 
 function formatTime(seconds: number) {
     return [

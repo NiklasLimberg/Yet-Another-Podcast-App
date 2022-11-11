@@ -1,8 +1,7 @@
+import { TRPCClientError } from '@trpc/client';
 import { defineStore } from 'pinia';
 
 import { client } from '~~/utils/trpcClient';
-
-import { TRPCClientError } from '@trpc/client';
 
 interface User {
     email: string;
@@ -16,10 +15,8 @@ export const useAuthStore = defineStore('auth-store', () => {
         try {
             user.value = await client.user.me.query();
         } catch (error) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            if (error.cause === 'UNAUTHORIZED') {
-                user.value = null;
+            if (error instanceof TRPCClientError) {
+                console.log(error.message);
             }
 
             // todo: fallback to idb
