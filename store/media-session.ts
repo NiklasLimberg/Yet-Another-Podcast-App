@@ -67,18 +67,15 @@ export const useMediaSessionStore = defineStore('media-session-store', () => {
     };
 
     audioElement.ontimeupdate = () => {
-        nextTick(() => {
-            if(!playingMedia.value || isSeeking.value) {
-                return;
-            }
+        if(!playingMedia.value) {
+            return;
+        }
 
-            playbackProgressStore.setProgress(playingMedia.value.id, Math.floor(audioElement.currentTime));
-            progress.value = audioElement.currentTime;
-        });
+        playbackProgressStore.setProgress(playingMedia.value.id, Math.floor(audioElement.currentTime));
+        progress.value = Math.floor(audioElement.currentTime);
     };
 
     function skipTo(seconds: number) {
-        isSeeking.value = true;
         audioElement.currentTime = seconds;
     }
 

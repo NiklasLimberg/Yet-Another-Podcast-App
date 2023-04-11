@@ -3,11 +3,13 @@
         v-infinite-scroll="onLoadMore"
         class="infinite-container"
     >
-        <EpisodeCard 
-            v-for="episode in episodes"
-            :key="episode.id"
-            :episode="episode"
-        />
+        <div class="content">
+            <EpisodeCard 
+                v-for="episode in episodes"
+                :key="episode.id"
+                :episode="episode"
+            />
+        </div>
     </div>
 </template>
 
@@ -41,17 +43,19 @@ async function onLoadMore() {
 
 <style scoped>
 @media (min-width: 1024px) {
-    .infinite-container {
-        width: 620px;
+    .content {
         margin: 0 auto;
+        width: 620px;
     }
 }
 
 .infinite-container {
-  display: grid;
-  gap: 16px;
-
-  height: 100vh;
   overflow-y: scroll;
+  width: 100%;
+}
+
+.content {
+   display: grid;
+   gap: 16px;
 }
 </style>

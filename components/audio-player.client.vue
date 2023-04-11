@@ -83,14 +83,8 @@ function formatTime(seconds: number) {
 
 <style scoped>
 .container {
-    position: fixed;
-    width: 100vw;
-    bottom: 0;
-    left: 0;
-    
     background-color: var(--neutrals-dark-gray-800);
     padding: 16px;
-    z-index: 1;
 }
 .space-between {
     display: flex;

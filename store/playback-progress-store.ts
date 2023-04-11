@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 
 import { useAuthStore } from './auth-store';
 
-
 interface PlaybackProgressEvent {
     episodeId: string
     progress: number;
